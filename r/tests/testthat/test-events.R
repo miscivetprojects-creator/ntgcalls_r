@@ -1,5 +1,5 @@
 test_that("event registry manages listeners and dispatches events", {
-  reg <- EventRegistry$new()
+  reg <- ntgcalls:::EventRegistry$new()
   received <- list()
 
   cb <- function(evt) {
@@ -17,3 +17,4 @@ test_that("event registry manages listeners and dispatches events", {
   reg$dispatch(list(event = "upgrade", chat_id = 12345, state = list(muted = FALSE)))
   expect_equal(length(received), 1L)
 })
+

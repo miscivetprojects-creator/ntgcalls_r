@@ -87,13 +87,6 @@ NTG_C_EXPORT const char* ntg_get_version(void);
 
 NTG_C_EXPORT const char* ntg_last_error(void);
 
-typedef enum {
-    NTG_VIDEO_ROTATION_0 = 0,
-    NTG_VIDEO_ROTATION_90 = 90,
-    NTG_VIDEO_ROTATION_180 = 180,
-    NTG_VIDEO_ROTATION_270 = 270,
-} ntg_video_rotation;
-
 @for e in enums
 @if e.emit
 typedef enum {

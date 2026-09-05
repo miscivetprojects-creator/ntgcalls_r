@@ -15,7 +15,7 @@ project(ntgcalls VERSION 3.0.0.20 LANGUAGES C CXX)
 include(cmake/VersionUtil.cmake)
 
 if (MSVC)
-    add_compile_options(/wd4068 /wd5030)
+    add_compile_options(/wd4068 /wd5030 /bigobj)
 elseif (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     add_compile_options(-Wno-unknown-attributes)
 else ()
