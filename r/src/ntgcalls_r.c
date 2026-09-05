@@ -1391,7 +1391,7 @@ SEXP r_ntg_poll_events(SEXP s_handle, SEXP s_max_events) {
                 SET_VECTOR_ELT(item, 1, ScalarReal((double)curr->chat_id));
                 SET_VECTOR_ELT(item, 2, st_val);
                 setAttrib(item, R_NamesSymbol, item_names);
-                UNPROTECT(3);
+                UNPROTECT(4);
                 break;
             }
             case NTG_EVT_STREAM_END: {
@@ -1407,7 +1407,7 @@ SEXP r_ntg_poll_events(SEXP s_handle, SEXP s_max_events) {
                 SET_VECTOR_ELT(item, 2, ScalarInteger((int)curr->data.stream_end.type));
                 SET_VECTOR_ELT(item, 3, ScalarInteger((int)curr->data.stream_end.device));
                 setAttrib(item, R_NamesSymbol, item_names);
-                UNPROTECT(1);
+                UNPROTECT(2);
                 break;
             }
             case NTG_EVT_CONNECTION_CHANGE: {
@@ -1430,7 +1430,7 @@ SEXP r_ntg_poll_events(SEXP s_handle, SEXP s_max_events) {
                 SET_VECTOR_ELT(item, 1, ScalarReal((double)curr->chat_id));
                 SET_VECTOR_ELT(item, 2, ci_val);
                 setAttrib(item, R_NamesSymbol, item_names);
-                UNPROTECT(3);
+                UNPROTECT(4);
                 break;
             }
             case NTG_EVT_SIGNALING_DATA: {
@@ -1449,7 +1449,7 @@ SEXP r_ntg_poll_events(SEXP s_handle, SEXP s_max_events) {
                 SET_VECTOR_ELT(item, 1, ScalarReal((double)curr->chat_id));
                 SET_VECTOR_ELT(item, 2, raw_vec);
                 setAttrib(item, R_NamesSymbol, item_names);
-                UNPROTECT(2);
+                UNPROTECT(3);
                 break;
             }
             case NTG_EVT_REMOTE_SOURCE_CHANGE: {
@@ -1474,7 +1474,7 @@ SEXP r_ntg_poll_events(SEXP s_handle, SEXP s_max_events) {
                 SET_VECTOR_ELT(item, 1, ScalarReal((double)curr->chat_id));
                 SET_VECTOR_ELT(item, 2, rs_val);
                 setAttrib(item, R_NamesSymbol, item_names);
-                UNPROTECT(3);
+                UNPROTECT(4);
                 break;
             }
             case NTG_EVT_REQUEST_BROADCAST_PART: {
@@ -1499,7 +1499,7 @@ SEXP r_ntg_poll_events(SEXP s_handle, SEXP s_max_events) {
                 SET_VECTOR_ELT(r_val, 3, ScalarReal((double)curr->data.broadcast_part_request.timestamp));
                 SET_VECTOR_ELT(r_val, 4, ScalarLogical(curr->data.broadcast_part_request.quality_update));
                 SET_VECTOR_ELT(r_val, 5, ScalarInteger(curr->data.broadcast_part_request.channel_id));
-                SET_VECTOR_ELT(r_val, 6, ScalarInteger((int)curr->data.broadcast_part_request.quality));
+                SET_VECTOR_ELT(r_val, 6, ScalarInteger(curr->data.broadcast_part_request.quality));
                 setAttrib(r_val, R_NamesSymbol, r_names);
 
                 item = PROTECT(allocVector(VECSXP, 3));
@@ -1507,7 +1507,7 @@ SEXP r_ntg_poll_events(SEXP s_handle, SEXP s_max_events) {
                 SET_VECTOR_ELT(item, 1, ScalarReal((double)curr->chat_id));
                 SET_VECTOR_ELT(item, 2, r_val);
                 setAttrib(item, R_NamesSymbol, item_names);
-                UNPROTECT(3);
+                UNPROTECT(4);
                 break;
             }
             case NTG_EVT_REQUEST_BROADCAST_TIMESTAMP: {
@@ -1519,7 +1519,7 @@ SEXP r_ntg_poll_events(SEXP s_handle, SEXP s_max_events) {
                 SET_VECTOR_ELT(item, 0, mkString("request_broadcast_timestamp"));
                 SET_VECTOR_ELT(item, 1, ScalarReal((double)curr->chat_id));
                 setAttrib(item, R_NamesSymbol, item_names);
-                UNPROTECT(1);
+                UNPROTECT(2);
                 break;
             }
             case NTG_EVT_REQUEST_PARTICIPANTS: {
@@ -1531,7 +1531,7 @@ SEXP r_ntg_poll_events(SEXP s_handle, SEXP s_max_events) {
                 SET_VECTOR_ELT(item, 0, mkString("request_participants"));
                 SET_VECTOR_ELT(item, 1, ScalarReal((double)curr->chat_id));
                 setAttrib(item, R_NamesSymbol, item_names);
-                UNPROTECT(1);
+                UNPROTECT(2);
                 break;
             }
             case NTG_EVT_OUTBOUND_BLOCK: {
@@ -1550,7 +1550,7 @@ SEXP r_ntg_poll_events(SEXP s_handle, SEXP s_max_events) {
                 SET_VECTOR_ELT(item, 1, ScalarReal((double)curr->chat_id));
                 SET_VECTOR_ELT(item, 2, raw_vec);
                 setAttrib(item, R_NamesSymbol, item_names);
-                UNPROTECT(2);
+                UNPROTECT(3);
                 break;
             }
             case NTG_EVT_SUBCHAIN_REQUEST: {
@@ -1575,7 +1575,7 @@ SEXP r_ntg_poll_events(SEXP s_handle, SEXP s_max_events) {
                 SET_VECTOR_ELT(item, 1, ScalarReal((double)curr->chat_id));
                 SET_VECTOR_ELT(item, 2, req_val);
                 setAttrib(item, R_NamesSymbol, item_names);
-                UNPROTECT(3);
+                UNPROTECT(4);
                 break;
             }
             case NTG_EVT_UPDATE_EMOJIS: {
@@ -1589,12 +1589,13 @@ SEXP r_ntg_poll_events(SEXP s_handle, SEXP s_max_events) {
                 SET_VECTOR_ELT(item, 1, ScalarReal((double)curr->chat_id));
                 SET_VECTOR_ELT(item, 2, mkString(curr->data.emojis ? curr->data.emojis : ""));
                 setAttrib(item, R_NamesSymbol, item_names);
-                UNPROTECT(1);
+                UNPROTECT(2);
                 break;
             }
             default:
                 break;
         }
+
 
         if (item != R_NilValue) {
             SET_VECTOR_ELT(ret, idx, item);
