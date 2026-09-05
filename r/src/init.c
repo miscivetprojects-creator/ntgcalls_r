@@ -55,6 +55,5 @@ static const R_CallMethodDef CallEntries[] = {
 
 attribute_visible void R_init_ntgcalls(DllInfo* dll) {
     R_registerRoutines(dll, NULL, CallEntries, NULL, NULL);
-    R_useDynamicSymbols(dll, FALSE);
-    R_forceSymbols(dll, TRUE);
+    R_useDynamicSymbols(dll, TRUE);
 }
