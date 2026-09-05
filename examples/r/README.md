@@ -43,3 +43,11 @@ Demonstrates R's thread-safe event listener architecture. Native WebRTC worker t
 ```powershell
 Rscript examples/r/event_listener.R
 ```
+
+### 5. [telegram_call_flow.R](telegram_call_flow.R)
+End-to-end workflow demonstrating realistic Telegram call update handling: generating raw PCM 48kHz audio streams, creating the MTProto `phone.joinGroupCall` SDP/WebRTC payload (`$create_call()`), streaming media, live volume/mute control, state tracking, and graceful teardown.
+
+```powershell
+Rscript examples/r/telegram_call_flow.R
+```
+
