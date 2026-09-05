@@ -12,6 +12,23 @@ generate_sine_pcm <- function(path, duration_sec = 10, sample_rate = 48000, freq
   close(con)
 }
 
+clean_telegram_json <- function(raw_str) {
+  s <- trimws(raw_str)
+  if (startsWith(s, "DataJSON(") && endsWith(s, ")")) {
+    s <- sub("^DataJSON\\(.*data\\s*=\\s*['\"]?", "", s)
+    s <- sub("['\"]?\\s*\\)$", "", s)
+  }
+  first_brace <- regexpr("\\{", s)[1]
+  if (first_brace > 0) {
+    s <- substr(s, first_brace, nchar(s))
+    last_idx <- max(gregexpr("\\}", s)[[1]])
+    if (last_idx > 0) {
+      s <- substr(s, 1, last_idx)
+    }
+  }
+  trimws(s)
+}
+
 run_live_call_session <- function() {
   cat("=====================================================\n")
   cat("       NTgCalls Live Telegram Call Session           \n")
@@ -38,6 +55,8 @@ run_live_call_session <- function() {
   if (nchar(signaling_file) > 0 && file.exists(signaling_file)) {
     signaling_json <- paste(readLines(signaling_file, warn = FALSE), collapse = "\n")
   }
+
+  signaling_json <- clean_telegram_json(signaling_json)
 
   tryCatch(
     {
@@ -86,8 +105,9 @@ run_live_call_session <- function() {
         microphone = audio_desc
       )
 
-      if (nchar(signaling_json) > 0) {
-        cat("[Step 2] Live Telegram MTProto response JSON detected!\n")
+      if (nchar(signaling_json) > 0 && startsWith(signaling_json, "{")) {
+        cat("[Step 2] Live Telegram MTProto response JSON detected:\n")
+        cat(substr(signaling_json, 1, min(120, nchar(signaling_json))), "...\n")
         cat("[Step 2] Connecting WebRTC transport to Telegram Voice Chat server...\n")
         client$connect(chat_id, signaling_json)
         cat("[Step 2 Done] Connected to live Telegram RTC servers!\n\n")
@@ -96,7 +116,7 @@ run_live_call_session <- function() {
         client$set_stream_sources(chat_id, StreamMode$AUDIO, media_desc)
         cat("[Step 3 Done] Streaming active! Entering live playback loop...\n\n")
 
-        cat("Press Ctrl+C to disconnect from the live call.\n\n")
+        cat("Playing live in voice chat... (Press Ctrl+C to disconnect)\n\n")
         for (i in 1:10) {
           client$process_events()
           Sys.sleep(0.5)
@@ -139,9 +159,9 @@ run_live_call_session <- function() {
       if (created_temp_audio && file.exists(audio_file)) {
         unlink(audio_file)
       }
-      cat("[Notice] Standalone example mode:\n")
+      cat("[Notice] Error occurred:\n")
       cat("  ", conditionMessage(e), "\n")
-      cat("  To link with native WebRTC core, set NTGCALLS_LIB_PATH environment variable to libntgcalls.\n")
+      cat("  Tip: Ensure TG_SIGNALING_JSON is a valid JSON string (or pass via TG_SIGNALING_FILE).\n")
     }
   )
 }
