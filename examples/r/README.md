@@ -58,15 +58,23 @@ Interactive and environment-configurable live Telegram call session:
 - Directly consumes live Telegram MTProto signaling responses (`$env:TG_SIGNALING_JSON` or `$env:TG_SIGNALING_FILE`).
 - Streams live WebRTC audio and monitors real-time upgrade/state events.
 
-```powershell
-# Run in simulation/test mode:
-Rscript examples/r/live_telegram_call.R
+### 7. [pyrogram_stream_player.py](../pyrogram_stream_player.py)
+Automated end-to-end Pyrogram String Session music & video player for Telegram group voice chats:
+- Authenticates via Telegram Pyrogram `STRING_SESSION`.
+- Extracts live audio & video from YouTube (`yt-dlp`).
+- Automatically creates or joins the group voice chat (`phone.JoinGroupCall`).
+- Connects `NTgCalls` WebRTC engine to stream **720p Video + 48kHz Stereo Audio**.
+- Sends announcement message to the group chat upon starting.
 
-# Or run connected to a live Telegram voice chat:
-$env:TG_CHAT_ID="-1001234567890"
-$env:TG_AUDIO_FILE="my_song.raw"
-$env:TG_SIGNALING_JSON='<telegram_response_json>'
-Rscript examples/r/live_telegram_call.R
+```powershell
+$env:API_ID="123456"
+$env:API_HASH="your_api_hash"
+$env:STRING_SESSION="your_pyrogram_string_session"
+$env:TG_CHAT_ID="-1004485855305"
+$env:PLAY_URL="https://youtu.be/Bc1A16p_Fk0?si=0rlo6_DNG-uZZATn"
+
+python examples/pyrogram_stream_player.py
 ```
+
 
 
