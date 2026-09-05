@@ -6,7 +6,7 @@ Authors@R: person("Lauren", role = c("aut", "cre"), email = "developer@pytgcalls
 Description: First-class R language bindings for NTgCalls WebRTC Telegram client.
     Provides complete control over Telegram voice and video calls, screen sharing,
     dynamic stream controls, encryption key exchange, and real-time media pipeline.
-License: LGPL-3.0-or-later
+License: LGPL (>= 3)
 Encoding: UTF-8
 RoxygenNote: 8.1.0
 Imports:
