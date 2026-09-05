@@ -15,11 +15,8 @@ run_basic_example <- function() {
       cat("UDP P2P Supported:", proto$udp_p2p, "\n")
       cat("UDP Reflector Supported:", proto$udp_reflector, "\n\n")
 
-      devices <- client$get_media_devices()
-      cat("Microphone Devices:", length(devices$microphone), "\n")
-      cat("Speaker Devices:", length(devices$speaker), "\n")
-      cat("Camera Devices:", length(devices$camera), "\n")
-      cat("Screen Devices:", length(devices$screen), "\n\n")
+      cpu <- client$cpu_usage()
+      cat("Client CPU Usage:", cpu, "%\n")
 
       client$destroy()
       cat("Client closed successfully.\n")
@@ -33,3 +30,4 @@ run_basic_example <- function() {
 }
 
 run_basic_example()
+

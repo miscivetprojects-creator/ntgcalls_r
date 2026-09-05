@@ -669,18 +669,20 @@ SEXP r_ntg_get_protocol(void) {
 
 static SEXP convert_devices(ntg_device_info* devs, size_t len) {
     SEXP list = PROTECT(allocVector(VECSXP, len));
-    SEXP dev_names = PROTECT(allocVector(STRSXP, 2));
-    SET_STRING_ELT(dev_names, 0, mkChar("name"));
-    SET_STRING_ELT(dev_names, 1, mkChar("metadata"));
-    for (size_t i = 0; i < len; ++i) {
-        SEXP item = PROTECT(allocVector(VECSXP, 2));
-        SET_VECTOR_ELT(item, 0, mkString(devs[i].name ? devs[i].name : ""));
-        SET_VECTOR_ELT(item, 1, mkString(devs[i].metadata ? devs[i].metadata : ""));
-        setAttrib(item, R_NamesSymbol, dev_names);
-        SET_VECTOR_ELT(list, i, item);
-        UNPROTECT(1);
+    if (len > 0 && devs) {
+        for (size_t i = 0; i < len; ++i) {
+            SEXP item = PROTECT(allocVector(VECSXP, 2));
+            SEXP dev_names = PROTECT(allocVector(STRSXP, 2));
+            SET_STRING_ELT(dev_names, 0, mkChar("name"));
+            SET_STRING_ELT(dev_names, 1, mkChar("metadata"));
+            SET_VECTOR_ELT(item, 0, mkString(devs[i].name ? devs[i].name : ""));
+            SET_VECTOR_ELT(item, 1, mkString(devs[i].metadata ? devs[i].metadata : ""));
+            setAttrib(item, R_NamesSymbol, dev_names);
+            SET_VECTOR_ELT(list, i, item);
+            UNPROTECT(2);
+        }
     }
-    UNPROTECT(2);
+    UNPROTECT(1);
     return list;
 }
 
@@ -688,7 +690,13 @@ SEXP r_ntg_get_media_devices(void) {
     check_symbols_available();
     ntg_media_devices out;
     memset(&out, 0, sizeof(out));
+#ifdef _WIN32
+    HRESULT hr = CoInitializeEx(NULL, COINIT_MULTITHREADED);
+#endif
     ntg_result res = p_ntg_get_media_devices(&out);
+#ifdef _WIN32
+    if (SUCCEEDED(hr)) CoUninitialize();
+#endif
     check_call_result(res);
 
     SEXP names = PROTECT(allocVector(STRSXP, 4));
@@ -698,16 +706,23 @@ SEXP r_ntg_get_media_devices(void) {
     SET_STRING_ELT(names, 3, mkChar("screen"));
 
     SEXP ret = PROTECT(allocVector(VECSXP, 4));
-    SET_VECTOR_ELT(ret, 0, convert_devices(out.microphone, out.microphone_len));
-    SET_VECTOR_ELT(ret, 1, convert_devices(out.speaker, out.speaker_len));
-    SET_VECTOR_ELT(ret, 2, convert_devices(out.camera, out.camera_len));
-    SET_VECTOR_ELT(ret, 3, convert_devices(out.screen, out.screen_len));
+    SEXP d_mic = PROTECT(convert_devices(out.microphone, out.microphone_len));
+    SET_VECTOR_ELT(ret, 0, d_mic);
+    SEXP d_spk = PROTECT(convert_devices(out.speaker, out.speaker_len));
+    SET_VECTOR_ELT(ret, 1, d_spk);
+    SEXP d_cam = PROTECT(convert_devices(out.camera, out.camera_len));
+    SET_VECTOR_ELT(ret, 2, d_cam);
+    SEXP d_scr = PROTECT(convert_devices(out.screen, out.screen_len));
+    SET_VECTOR_ELT(ret, 3, d_scr);
     setAttrib(ret, R_NamesSymbol, names);
 
     if (p_ntg_media_devices_free) p_ntg_media_devices_free(&out);
-    UNPROTECT(2);
+    UNPROTECT(6);
     return ret;
 }
+
+
+
 
 
 SEXP r_ntg_create_p2p_call(SEXP s_handle, SEXP s_user_id) {
