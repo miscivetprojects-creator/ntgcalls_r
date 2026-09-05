@@ -1,4 +1,4 @@
-// @generated from schema/ntgcalls.ntl
+// @generated from schema/ntgcalls.ntl -- DO NOT EDIT
 // NOLINTBEGIN
 #pragma once
 
@@ -81,6 +81,13 @@ NTG_C_EXPORT void ntg_set_log_callback(ntg_log_cb callback, void* user_data);
 NTG_C_EXPORT const char* ntg_get_version(void);
 
 NTG_C_EXPORT const char* ntg_last_error(void);
+
+typedef enum {
+    NTG_VIDEO_ROTATION_0 = 0,
+    NTG_VIDEO_ROTATION_90 = 90,
+    NTG_VIDEO_ROTATION_180 = 180,
+    NTG_VIDEO_ROTATION_270 = 270,
+} ntg_video_rotation;
 
 typedef enum {
     NTG_MEDIA_SOURCE_UNKNOWN,

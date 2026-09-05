@@ -1,4 +1,5 @@
 useDynLib(ntgcalls, .registration = TRUE)
+importFrom(R6, R6Class)
 
 export(ntgcalls)
 export(NTgCallsClient)
