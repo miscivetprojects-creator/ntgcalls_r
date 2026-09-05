@@ -29,13 +29,23 @@ clean_telegram_json <- function(raw_str) {
   trimws(s)
 }
 
+send_telegram_group_message <- function(bot_token, chat_id, text) {
+  if (nchar(bot_token) == 0) return(FALSE)
+  url <- sprintf("https://api.telegram.org/bot%s/sendMessage", bot_token)
+  tryCatch({
+    system2("curl.exe", args = c("-s", "-X", "POST", url, "-d", sprintf("chat_id=%s", as.character(chat_id)), "-d", sprintf("text=%s", text)), stdout = FALSE, stderr = FALSE)
+    TRUE
+  }, error = function(e) FALSE)
+}
+
 run_live_call_session <- function() {
   cat("=====================================================\n")
   cat("       NTgCalls Live Telegram Call Session           \n")
   cat("=====================================================\n\n")
 
-  chat_id_env <- Sys.getenv("TG_CHAT_ID", "-1001234567890")
+  chat_id_env <- Sys.getenv("TG_CHAT_ID", "-1004485855305")
   chat_id <- as.numeric(chat_id_env)
+  bot_token <- Sys.getenv("TG_BOT_TOKEN", "")
 
   audio_file <- Sys.getenv("TG_AUDIO_FILE", "")
   created_temp_audio <- FALSE
@@ -106,15 +116,20 @@ run_live_call_session <- function() {
       )
 
       if (nchar(signaling_json) > 0 && startsWith(signaling_json, "{")) {
-        cat("[Step 2] Live Telegram MTProto response JSON detected:\n")
-        cat(substr(signaling_json, 1, min(120, nchar(signaling_json))), "...\n")
+        cat("[Step 2] Live Telegram MTProto response JSON detected!\n")
         cat("[Step 2] Connecting WebRTC transport to Telegram Voice Chat server...\n")
         client$connect(chat_id, signaling_json)
         cat("[Step 2 Done] Connected to live Telegram RTC servers!\n\n")
 
         cat("[Step 3] Attaching live audio stream pipeline...\n")
         client$set_stream_sources(chat_id, StreamMode$AUDIO, media_desc)
-        cat("[Step 3 Done] Streaming active! Entering live playback loop...\n\n")
+        cat("[Step 3 Done] Streaming active!\n\n")
+
+        if (nchar(bot_token) > 0) {
+          cat("[Telegram Bot] Sending notification message to group...\n")
+          send_telegram_group_message(bot_token, chat_id, "🎶 NTgCalls voice stream is now LIVE in this voice chat!")
+          cat("[Telegram Bot] Group notification message sent successfully!\n\n")
+        }
 
         cat("Playing live in voice chat... (Press Ctrl+C to disconnect)\n\n")
         for (i in 1:10) {
@@ -128,7 +143,8 @@ run_live_call_session <- function() {
         cat("     phone.joinGroupCall(peer=chat_id, params=DataJSON(data=SDP_JSON))\n")
         cat("  2. Pass Telegram's returned response JSON via environment variable:\n")
         cat("     $env:TG_SIGNALING_JSON='<telegram_response_json>'\n")
-        cat("     or save to a file and set $env:TG_SIGNALING_FILE='response.json'\n\n")
+        cat("     or save to a file and set $env:TG_SIGNALING_FILE='response.json'\n")
+        cat("  3. (Optional) Set $env:TG_BOT_TOKEN='<your_bot_token>' to send group messages automatically!\n\n")
 
         cat("[Step 2 (Simulated)] Attaching media stream descriptor...\n")
         client$set_stream_sources(chat_id, StreamMode$AUDIO, media_desc)
@@ -141,6 +157,12 @@ run_live_call_session <- function() {
 
         state <- client$get_state(chat_id)
         cat(sprintf("  -> Verified State: Muted=%s, VideoPaused=%s\n\n", state$muted, state$video_paused))
+
+        if (nchar(bot_token) > 0) {
+          cat("[Telegram Bot] Sending start notification to group...\n")
+          send_telegram_group_message(bot_token, chat_id, "🎶 NTgCalls voice stream test notification!")
+          cat("[Telegram Bot] Message sent!\n\n")
+        }
 
         client$process_events()
       }
