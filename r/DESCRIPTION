@@ -2,7 +2,7 @@ Package: ntgcalls
 Type: Package
 Title: R Bindings for NTgCalls
 Version: 3.0.0.20
-Authors@R: person("Lauren", role = c("aut", "cre"), email = "developer@pytgcalls.org")
+Authors@R: person("Lauren", role = c("aut", "cre"), email = "yumikoservices@gmail.com")
 Description: First-class R language bindings for NTgCalls WebRTC Telegram client.
     Provides complete control over Telegram voice and video calls, screen sharing,
     dynamic stream controls, encryption key exchange, and real-time media pipeline.
