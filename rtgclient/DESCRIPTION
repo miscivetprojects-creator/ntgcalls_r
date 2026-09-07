@@ -1,0 +1,15 @@
+Package: rtgclient
+Title: High-Level Telegram Calls and MTProto Client for R
+Version: 0.1.0
+Authors@R: person("TG-BOTSNETWORK", email = "hostparas@gmail.com", role = c("aut", "cre"))
+Description: High-level client for Telegram group calls and voice chats in R, integrating MTProto session handling and WebRTC media streaming via ntgcalls.
+License: LGPL-3
+Encoding: UTF-8
+RoxygenNote: 7.3.2
+Imports:
+    R6,
+    jsonlite,
+    ntgcalls
+Suggests:
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
