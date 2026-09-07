@@ -2,6 +2,8 @@ Package: rtgclient
 Title: Professional Telegram VoIP, WebRTC and MTProto Client for R
 Version: 0.2.0
 Authors@R: person("TG-BOTSNETWORK", email = "hostparas@gmail.com", role = c("aut", "cre"))
+Author: TG-BOTSNETWORK
+Maintainer: TG-BOTSNETWORK <hostparas@gmail.com>
 Description: Professional client for Telegram group calls, 1-on-1 P2P calls, and WebRTC streaming in R. Supports TDLib, Pyrogram, Telethon, and raw MTProto sessions with complete schema layer bindings via ntgcalls.
 License: LGPL-3
 Encoding: UTF-8

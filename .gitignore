@@ -53,3 +53,5 @@ uv.lock
 .Rhistory
 
 /docs-output
+*.rds
+
