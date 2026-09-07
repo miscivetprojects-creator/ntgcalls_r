@@ -3,12 +3,19 @@ RTgClient <- R6::R6Class(
   public = list(
     mtproto = NULL,
     ntgcalls = NULL,
+    p2p = NULL,
+    group = NULL,
+    conference = NULL,
     active_calls = list(),
     call_statuses = list(),
     handlers = list(
       stream_end = list(),
       upgrade = list(),
-      connection_change = list()
+      connection_change = list(),
+      frames = list(),
+      signaling_data = list(),
+      remote_source_change = list(),
+      update_emojis = list()
     ),
     initialize = function(
       mtproto_adapter = NULL,
@@ -26,32 +33,52 @@ RTgClient <- R6::R6Class(
         self$ntgcalls <- ntgcalls_instance
       }
 
+      self$p2p <- P2PCallManager$new(self$ntgcalls, self$mtproto)
+      self$group <- GroupCallManager$new(self$ntgcalls, self$mtproto)
+      self$conference <- ConferenceManager$new(self$ntgcalls, self$mtproto)
       self$active_calls <- list()
       self$call_statuses <- list()
 
       if (!is.null(self$ntgcalls) && is.function(self$ntgcalls$on)) {
         self$ntgcalls$on("stream_end", function(ev) {
-          chat_id <- ev$chat_id
-          type <- ev$type
-          device <- ev$device
           for (h in self$handlers$stream_end) {
-            tryCatch(h(chat_id, type, device), error = function(e) {})
+            tryCatch(h(ev$chat_id, ev$type, ev$device), error = function(e) {})
           }
         })
 
         self$ntgcalls$on("connection_change", function(ev) {
-          chat_id <- ev$chat_id
-          state <- ev$state
           for (h in self$handlers$connection_change) {
-            tryCatch(h(chat_id, state), error = function(e) {})
+            tryCatch(h(ev$chat_id, ev$state), error = function(e) {})
           }
         })
 
         self$ntgcalls$on("upgrade", function(ev) {
-          chat_id <- ev$chat_id
-          state <- ev$state
           for (h in self$handlers$upgrade) {
-            tryCatch(h(chat_id, state), error = function(e) {})
+            tryCatch(h(ev$chat_id, ev$state), error = function(e) {})
+          }
+        })
+
+        self$ntgcalls$on("frames", function(ev) {
+          for (h in self$handlers$frames) {
+            tryCatch(h(ev$chat_id, ev$mode, ev$device, ev$frames), error = function(e) {})
+          }
+        })
+
+        self$ntgcalls$on("signaling_data", function(ev) {
+          for (h in self$handlers$signaling_data) {
+            tryCatch(h(ev$chat_id, ev$data), error = function(e) {})
+          }
+        })
+
+        self$ntgcalls$on("remote_source_change", function(ev) {
+          for (h in self$handlers$remote_source_change) {
+            tryCatch(h(ev$chat_id, ev$state), error = function(e) {})
+          }
+        })
+
+        self$ntgcalls$on("update_emojis", function(ev) {
+          for (h in self$handlers$update_emojis) {
+            tryCatch(h(ev$chat_id, ev$emojis), error = function(e) {})
           }
         })
       }
@@ -154,6 +181,42 @@ RTgClient <- R6::R6Class(
       st <- self$call_statuses[[cid]]
       if (is.null(st)) CallStatus$IDLE else st
     },
+    add_incoming_video = function(chat_id, user_id, endpoint, ssrc_groups = list()) {
+      self$ntgcalls$add_incoming_video(chat_id, user_id, endpoint, ssrc_groups)
+    },
+    remove_incoming_video = function(chat_id, endpoint) {
+      self$ntgcalls$remove_incoming_video(chat_id, endpoint)
+    },
+    send_external_frame = function(chat_id, device, data, frame_data) {
+      self$ntgcalls$send_external_frame(chat_id, device, data, frame_data)
+    },
+    send_broadcast_part = function(chat_id, segment_id, part_id, status, quality_update = FALSE, data = NULL) {
+      self$ntgcalls$send_broadcast_part(chat_id, segment_id, part_id, status, quality_update, data)
+    },
+    send_broadcast_timestamp = function(chat_id, timestamp) {
+      self$ntgcalls$send_broadcast_timestamp(chat_id, timestamp)
+    },
+    time = function(chat_id, mode = ntgcalls::StreamMode$CAPTURE) {
+      self$ntgcalls$time(chat_id, mode)
+    },
+    get_state = function(chat_id) {
+      self$ntgcalls$get_state(chat_id)
+    },
+    get_call_type = function(chat_id) {
+      self$ntgcalls$get_call_type(chat_id)
+    },
+    get_connection_mode = function(chat_id) {
+      self$ntgcalls$get_connection_mode(chat_id)
+    },
+    cpu_usage = function() {
+      self$ntgcalls$cpu_usage()
+    },
+    get_emojis_fingerprint = function(chat_id) {
+      self$ntgcalls$get_emojis_fingerprint(chat_id)
+    },
+    calls = function() {
+      self$ntgcalls$calls()
+    },
     on_stream_end = function(handler) {
       if (is.function(handler)) {
         self$handlers$stream_end <- c(self$handlers$stream_end, list(handler))
@@ -169,6 +232,30 @@ RTgClient <- R6::R6Class(
     on_connection_change = function(handler) {
       if (is.function(handler)) {
         self$handlers$connection_change <- c(self$handlers$connection_change, list(handler))
+      }
+      invisible(self)
+    },
+    on_frames = function(handler) {
+      if (is.function(handler)) {
+        self$handlers$frames <- c(self$handlers$frames, list(handler))
+      }
+      invisible(self)
+    },
+    on_signaling_data = function(handler) {
+      if (is.function(handler)) {
+        self$handlers$signaling_data <- c(self$handlers$signaling_data, list(handler))
+      }
+      invisible(self)
+    },
+    on_remote_source_change = function(handler) {
+      if (is.function(handler)) {
+        self$handlers$remote_source_change <- c(self$handlers$remote_source_change, list(handler))
+      }
+      invisible(self)
+    },
+    on_update_emojis = function(handler) {
+      if (is.function(handler)) {
+        self$handlers$update_emojis <- c(self$handlers$update_emojis, list(handler))
       }
       invisible(self)
     }

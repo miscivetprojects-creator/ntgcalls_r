@@ -130,3 +130,19 @@ FFmpegStream <- function(
     out
   }
 }
+
+CustomStream <- function(
+  microphone = NULL,
+  speaker = NULL,
+  camera = NULL,
+  screen = NULL
+) {
+  out <- ntgcalls::media_description(
+    microphone = microphone,
+    speaker = speaker,
+    camera = camera,
+    screen = screen
+  )
+  class(out) <- c("rtg_custom_stream", class(out))
+  out
+}
