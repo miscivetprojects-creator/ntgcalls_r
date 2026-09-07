@@ -1,0 +1,2 @@
+PKG_CPPFLAGS = -I../inst/include -I../support
+PKG_LIBS = -lole32 -lws2_32 -lsecur32 -lcrypt32 -liphlpapi -lwinmm

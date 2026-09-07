@@ -1,0 +1,11 @@
+﻿DESCRIPTION
+NAMESPACE
+R/ntgcalls.R
+src/init.c
+src/ntgcalls.h
+src/ntgcalls_r.c
+src/*.o
+src/*.so
+src/*.dll
+src/*.dylib
+src/*.a

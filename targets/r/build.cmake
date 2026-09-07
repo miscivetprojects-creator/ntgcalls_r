@@ -1,0 +1,3 @@
+add_library(${NTG_LIB_NAME} SHARED ${MODULE_SRC} ${GEN_SOURCES})
+target_include_directories(${NTG_LIB_NAME} PRIVATE ${GEN_INCLUDES} ${TARGET_CODE_DIR})
+set_target_properties(${NTG_LIB_NAME} PROPERTIES POSITION_INDEPENDENT_CODE ON)

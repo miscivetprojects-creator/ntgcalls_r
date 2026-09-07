@@ -45,5 +45,11 @@ uv.lock
 *.mp4
 *.mp3
 *.so
+*.o
+*.dll
+*.dylib
+*.a
+.RData
+.Rhistory
 
 /docs-output

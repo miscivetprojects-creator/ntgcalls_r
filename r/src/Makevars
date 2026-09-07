@@ -1,3 +1,0 @@
-PKG_CPPFLAGS = -I../inst/include -I. -D_GNU_SOURCE
-PKG_CFLAGS = $(SHLIB_CFLAGS)
-PKG_LIBS = -lpthread -ldl
